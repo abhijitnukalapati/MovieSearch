@@ -1,11 +1,22 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!--
+        the size has been set based on the guidelines and video demo below:
+        https://www.google.com/design/spec/components/progress-activity.html#progress-activity-types-of-indicators
+   -->
+    <style name="LoadMoreProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="android:minWidth">32dp</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:maxWidth">32dp</item>
+        <item name="android:maxHeight">32dp</item>
     </style>
 
 </resources>
