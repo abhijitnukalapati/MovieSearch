@@ -1,5 +1,7 @@
 package com.diaby.moviesearch.ui;
 
+import android.app.LoaderManager;
+import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,15 +17,10 @@ import android.widget.ProgressBar;
 
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovieSearch;
+import com.diaby.moviesearch.util.MoviesLoader;
 import com.diaby.moviesearch.util.SpacingDecoration;
-import com.diaby.moviesearch.util.UIThreadCallback;
-import com.diaby.moviesearch.util.InstanceUtil;
 
-import java.io.IOException;
-
-import okhttp3.Request;
-
-public class MoviesActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
+public class MoviesActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<MMovieSearch>{
 
     private RecyclerView vRecyclerView;
     private ProgressBar vProgressBar;
@@ -31,8 +28,9 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     private MoviesAdapter mMoviesAdapter;
 
     private static final String TAG = MoviesActivity.class.getSimpleName();
+    private static final int MOVIES_LOADER_ID = 30;
+    private static final String SEARCH_QUERY = "search_query";
     private static final String CONFIG_URL = "https://api.themoviedb.org/3/configuration?api_key=7fcb31f20b33a399c758eeac37a16610";
-    private static final String SEARCH_URL = "https://api.themoviedb.org/3/search/movie?query=%1$s&api_key=7fcb31f20b33a399c758eeac37a16610";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +46,8 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
         vRecyclerView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.movies_grid_span_count)));
         vRecyclerView.setAdapter(mMoviesAdapter = new MoviesAdapter(this));
         vRecyclerView.addItemDecoration(new SpacingDecoration(R.dimen.grid_divider, this));
+
+        getLoaderManager().initLoader(MOVIES_LOADER_ID, null, this);
     }
 
     @Override
@@ -70,31 +70,11 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onQueryTextSubmit(String query) {
         Log.d(TAG, String.format("Searching for: \"%1$s\"",query));
 
-        Request searchRequest = new Request.Builder()
-                .url(String.format(SEARCH_URL, query))
-                .build();
+        Bundle bundle = new Bundle();
+        bundle.putString(SEARCH_QUERY, query);
 
         vProgressBar.setVisibility(View.VISIBLE);
-        InstanceUtil.getInstance().getClient().newCall(searchRequest).enqueue(new UIThreadCallback() {
-            @Override
-            public void onSuccess(String response, int statusCode) {
-                vProgressBar.setVisibility(View.GONE);
-
-                MMovieSearch movieSearch = InstanceUtil.getInstance().getGson().fromJson(response, MMovieSearch.class);
-                movieSearch.filterResults();
-                mMoviesAdapter.resetData(movieSearch.getResults());
-            }
-
-            @Override
-            public void onFailure(String response, int statusCode) {
-                vProgressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onException(IOException exception) {
-                vProgressBar.setVisibility(View.GONE);
-            }
-        });
+        getLoaderManager().restartLoader(MOVIES_LOADER_ID, bundle, this);
 
         return true;
     }
@@ -102,5 +82,24 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onQueryTextChange(String newText) {
         return false;
+    }
+
+    @Override
+    public Loader<MMovieSearch> onCreateLoader(int i, Bundle bundle) {
+        String query = bundle != null ? bundle.getString(SEARCH_QUERY, "") : "";
+        return new MoviesLoader(this, query);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<MMovieSearch> loader, MMovieSearch movieSearch) {
+        vProgressBar.setVisibility(View.GONE);
+
+        movieSearch.filterResults();
+        mMoviesAdapter.resetData(movieSearch.getResults());
+    }
+
+    @Override
+    public void onLoaderReset(Loader<MMovieSearch> loader) {
+        mMoviesAdapter.clearData();
     }
 }

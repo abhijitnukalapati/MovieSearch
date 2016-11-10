@@ -53,7 +53,7 @@ public class MMovieSearch {
     /**
      * Filter the movie results by removing
      * instances where a poster path doesn't
-     * exist
+     * exist (null or empty)
      */
     public void filterResults() {
         Iterator<MMovie> iterator = results.iterator();

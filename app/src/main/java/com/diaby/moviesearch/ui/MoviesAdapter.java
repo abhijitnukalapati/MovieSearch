@@ -127,6 +127,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
+    public void clearData() {
+        movies.clear();
+        notifyDataSetChanged();
+    }
+
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
 
