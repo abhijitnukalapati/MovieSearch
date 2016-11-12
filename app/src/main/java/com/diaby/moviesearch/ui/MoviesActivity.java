@@ -16,21 +16,22 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.diaby.moviesearch.R;
-import com.diaby.moviesearch.model.MMovieSearch;
+import com.diaby.moviesearch.model.MMovie;
+import com.diaby.moviesearch.util.AppUtils;
 import com.diaby.moviesearch.util.MoviesLoader;
 import com.diaby.moviesearch.util.SpacingDecoration;
 
-public class MoviesActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<MMovieSearch>{
+import java.util.List;
+
+public class MoviesActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, LoaderManager.LoaderCallbacks<List<MMovie>>{
 
     private RecyclerView vRecyclerView;
     private ProgressBar vProgressBar;
-
     private MoviesAdapter mMoviesAdapter;
 
     private static final String TAG = MoviesActivity.class.getSimpleName();
     private static final int MOVIES_LOADER_ID = 30;
     private static final String SEARCH_QUERY = "search_query";
-    private static final String CONFIG_URL = "https://api.themoviedb.org/3/configuration?api_key=7fcb31f20b33a399c758eeac37a16610";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +44,49 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
         vRecyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
         vProgressBar = (ProgressBar) findViewById(R.id.movies_progress_bar);
 
-        vRecyclerView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.movies_grid_span_count)));
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.movies_grid_span_count));
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (mMoviesAdapter.getItemViewType(position) == MoviesAdapter.ITEM_VIEW_TYPE_LOADER) {
+                    return getResources().getInteger(R.integer.movies_grid_span_count);
+                } else {
+                    return 1;
+                }
+            }
+        });
+
+        vRecyclerView.setLayoutManager(gridLayoutManager);
         vRecyclerView.setAdapter(mMoviesAdapter = new MoviesAdapter(this));
         vRecyclerView.addItemDecoration(new SpacingDecoration(R.dimen.grid_divider, this));
+
+        vRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+              @Override
+              public void onScrolled(final RecyclerView recyclerView, int dx, int dy) {
+                  final GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
+
+                  final int currentItemCount = layoutManager.getItemCount();
+                  final int visibleItemCount = layoutManager.getChildCount();
+                  final int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+                  final int buffer = 4;
+
+                  Loader<List<MMovie>> loader = getLoaderManager().getLoader(MOVIES_LOADER_ID);
+                  MoviesLoader moviesLoader = (MoviesLoader) loader;
+
+                  // load more items if we reached the end of the list
+                  if ((currentItemCount - visibleItemCount) <= (firstVisibleItemPosition + buffer) && !moviesLoader.isLoading()) {
+
+                      vRecyclerView.post(new Runnable() {
+                          @Override
+                          public void run() {
+                              mMoviesAdapter.setShowLoader(true);
+                          }
+                      });
+
+                      moviesLoader.loadNextPage();
+                  }
+              }
+        });
 
         getLoaderManager().initLoader(MOVIES_LOADER_ID, null, this);
     }
@@ -70,10 +111,14 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     public boolean onQueryTextSubmit(String query) {
         Log.d(TAG, String.format("Searching for: \"%1$s\"",query));
 
+        AppUtils.hideSoftInput(this);
+
         Bundle bundle = new Bundle();
         bundle.putString(SEARCH_QUERY, query);
 
         vProgressBar.setVisibility(View.VISIBLE);
+
+        mMoviesAdapter.clearData();
         getLoaderManager().restartLoader(MOVIES_LOADER_ID, bundle, this);
 
         return true;
@@ -85,21 +130,23 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public Loader<MMovieSearch> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<MMovie>> onCreateLoader(int i, Bundle bundle) {
         String query = bundle != null ? bundle.getString(SEARCH_QUERY, "") : "";
         return new MoviesLoader(this, query);
     }
 
     @Override
-    public void onLoadFinished(Loader<MMovieSearch> loader, MMovieSearch movieSearch) {
-        vProgressBar.setVisibility(View.GONE);
+    public void onLoadFinished(Loader<List<MMovie>> loader, List<MMovie> movies) {
+        if(vProgressBar.getVisibility() != View.GONE) {
+            vProgressBar.setVisibility(View.GONE);
+        }
 
-        movieSearch.filterResults();
-        mMoviesAdapter.resetData(movieSearch.getResults());
+        mMoviesAdapter.setShowLoader(false);
+        mMoviesAdapter.addMoreItems(movies);
     }
 
     @Override
-    public void onLoaderReset(Loader<MMovieSearch> loader) {
+    public void onLoaderReset(Loader<List<MMovie>> loader) {
         mMoviesAdapter.clearData();
     }
 }

@@ -26,8 +26,8 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private static final int ITEM_VIEW_TYPE_MOVIE = 321;
-    private static final int ITEM_VIEW_TYPE_LOADER = 322;
+    public static final int ITEM_VIEW_TYPE_MOVIE = 321;
+    public static final int ITEM_VIEW_TYPE_LOADER = 322;
 
     private List<MMovie> movies = new ArrayList<>();
     private boolean mShowLoader; // flag to determine if more products are being loaded
@@ -91,7 +91,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void setShowLoader(boolean shouldShow) {
         if(mShowLoader != shouldShow) {
             mShowLoader = shouldShow;
-            notifyItemChanged(getItemCount());
+            notifyItemInserted(getItemCount());
         }
     }
 

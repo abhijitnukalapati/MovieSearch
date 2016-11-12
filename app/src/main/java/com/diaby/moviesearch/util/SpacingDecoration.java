@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.diaby.moviesearch.R;
+import com.diaby.moviesearch.ui.MoviesAdapter;
 
 /**
  * Created by abhijitnukalapati on 11/8/16.
@@ -35,22 +36,24 @@ public class SpacingDecoration extends RecyclerView.ItemDecoration{
         for (int i = 0; i < childCount; i++) {
             final View child = parent.getChildAt(i);
 
-            final int right = lm.getDecoratedRight(child);
-            final int bottom = lm.getDecoratedBottom(child);
+            if(parent.getChildViewHolder(child).getItemViewType() == MoviesAdapter.ITEM_VIEW_TYPE_MOVIE) {
+                final int right = lm.getDecoratedRight(child);
+                final int bottom = lm.getDecoratedBottom(child);
 
-            // draw the bottom spacer
-            canvas.drawRect(lm.getDecoratedLeft(child),
-                    bottom - spacing,
-                    right,
-                    bottom,
-                    spacingPaint);
+                // draw the bottom spacer
+                canvas.drawRect(lm.getDecoratedLeft(child),
+                        bottom - spacing,
+                        right,
+                        bottom,
+                        spacingPaint);
 
-            // draw the right spacer
-            canvas.drawRect(right - spacing,
-                    lm.getDecoratedTop(child),
-                    right,
-                    bottom - spacing,
-                    spacingPaint);
+                // draw the right spacer
+                canvas.drawRect(right - spacing,
+                        lm.getDecoratedTop(child),
+                        right,
+                        bottom - spacing,
+                        spacingPaint);
+            }
         }
     }
 

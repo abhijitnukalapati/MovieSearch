@@ -50,18 +50,4 @@ public class MMovieSearch {
         this.totalPages = totalPages;
     }
 
-    /**
-     * Filter the movie results by removing
-     * instances where a poster path doesn't
-     * exist (null or empty)
-     */
-    public void filterResults() {
-        Iterator<MMovie> iterator = results.iterator();
-        while(iterator.hasNext()) {
-            MMovie movie = iterator.next();
-            if(TextUtils.isEmpty(movie.getPosterPath())) {
-                iterator.remove();
-            }
-        }
-    }
 }
