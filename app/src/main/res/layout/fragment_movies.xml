@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:background="@color/movies_list_background"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<android.support.design.widget.AppBarLayout
+    android:id="@+id/appbar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    <AutoCompleteTextView
+        android:id="@+id/movies_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:hint="@string/movie_search_hint"
+        android:imeOptions="actionSearch|flagNoExtractUi"
+        android:inputType="text"
+        android:maxLines="1"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_scrollFlags="scroll|enterAlways"/>
+</android.support.design.widget.AppBarLayout>
+
+<android.support.v7.widget.RecyclerView
+    android:id="@+id/movies_recycler_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+<ProgressBar
+    android:id="@+id/movies_progress_bar"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:visibility="gone"/>
+</android.support.design.widget.CoordinatorLayout>
