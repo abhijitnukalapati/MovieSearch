@@ -44,12 +44,13 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
         vRecyclerView = (RecyclerView) findViewById(R.id.movies_recycler_view);
         vProgressBar = (ProgressBar) findViewById(R.id.movies_progress_bar);
 
-        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, getResources().getInteger(R.integer.movies_grid_span_count));
+        final int spanCount = getResources().getInteger(R.integer.movies_grid_span_count);
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, spanCount);
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
                 if (mMoviesAdapter.getItemViewType(position) == MoviesAdapter.ITEM_VIEW_TYPE_LOADER) {
-                    return getResources().getInteger(R.integer.movies_grid_span_count);
+                    return spanCount;
                 } else {
                     return 1;
                 }
@@ -66,16 +67,15 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
                   final GridLayoutManager layoutManager = (GridLayoutManager) recyclerView.getLayoutManager();
 
                   final int currentItemCount = layoutManager.getItemCount();
-                  final int visibleItemCount = layoutManager.getChildCount();
+                  final int visibleItemCount = recyclerView.getChildCount();
                   final int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-                  final int buffer = 4;
+                  final int buffer = spanCount * 2;
 
                   Loader<List<MMovie>> loader = getLoaderManager().getLoader(MOVIES_LOADER_ID);
                   MoviesLoader moviesLoader = (MoviesLoader) loader;
 
                   // load more items if we reached the end of the list
                   if ((currentItemCount - visibleItemCount) <= (firstVisibleItemPosition + buffer) && !moviesLoader.isLoading()) {
-
                       vRecyclerView.post(new Runnable() {
                           @Override
                           public void run() {
@@ -118,7 +118,6 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
 
         vProgressBar.setVisibility(View.VISIBLE);
 
-        mMoviesAdapter.clearData();
         getLoaderManager().restartLoader(MOVIES_LOADER_ID, bundle, this);
 
         return true;
@@ -136,17 +135,16 @@ public class MoviesActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
     @Override
-    public void onLoadFinished(Loader<List<MMovie>> loader, List<MMovie> movies) {
+    public void onLoadFinished(Loader<List<MMovie>> loader, final List<MMovie> movies) {
         if(vProgressBar.getVisibility() != View.GONE) {
             vProgressBar.setVisibility(View.GONE);
         }
 
         mMoviesAdapter.setShowLoader(false);
-        mMoviesAdapter.addMoreItems(movies);
+        mMoviesAdapter.updateData(movies);
     }
 
     @Override
     public void onLoaderReset(Loader<List<MMovie>> loader) {
-        mMoviesAdapter.clearData();
     }
 }

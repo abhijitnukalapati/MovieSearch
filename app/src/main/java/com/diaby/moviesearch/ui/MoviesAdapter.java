@@ -78,7 +78,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public int getItemCount() {
         int pad = mShowLoader ? 1 : 0;
-
         return movies != null ? movies.size() + pad : 0;
     }
 
@@ -89,9 +88,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * @param shouldShow a boolean
      */
     public void setShowLoader(boolean shouldShow) {
-        if(mShowLoader != shouldShow) {
-            mShowLoader = shouldShow;
+        mShowLoader = shouldShow;
+        if(mShowLoader) {
             notifyItemInserted(getItemCount());
+        } else {
+            notifyItemRemoved(getItemCount());
         }
     }
 
@@ -109,27 +110,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    /**
-     * Adds the given product items to the adapter's
-     * list data and notifies the adapter of the
-     * change
-     *
-     * @param moreMovies a list of movies
-     */
-    public void addMoreItems(@NonNull List<MMovie> moreMovies) {
-        movies.addAll(moreMovies);
-        notifyItemRangeInserted(getItemCount(), moreMovies.size());
-    }
-
-    public void resetData(@NonNull List<MMovie> moreMovies){
-        movies.clear();
-        movies = moreMovies;
-        notifyDataSetChanged();
-    }
-
-    public void clearData() {
-        movies.clear();
-        notifyDataSetChanged();
+    public void updateData(@NonNull List<MMovie> moreMovies){
+        int addedCount = moreMovies.size() - movies.size();
+        movies.addAll(moreMovies.subList(movies.size(), moreMovies.size()));
+        notifyItemRangeInserted(getItemCount(), addedCount);
     }
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {

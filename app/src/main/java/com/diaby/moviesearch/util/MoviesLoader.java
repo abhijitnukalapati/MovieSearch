@@ -11,6 +11,7 @@ import com.diaby.moviesearch.model.MMovie;
 import com.diaby.moviesearch.model.MMovieSearch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,7 +23,6 @@ import okhttp3.Response;
  */
 
 public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
-
     private static final String TAG = MoviesLoader.class.getSimpleName();
     private static final String SEARCH_URL = "https://api.themoviedb.org/3/search/movie";
 
@@ -45,7 +45,11 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
 
     @Override
     protected void onStartLoading() {
-        if(!TextUtils.isEmpty(mQuery)) {
+        if (mMovies != null) {
+            deliverResult(mMovies);
+        }
+
+        if ((takeContentChanged() || mMovies == null) && !TextUtils.isEmpty(mQuery)) {
             forceLoad();
         }
     }
@@ -62,8 +66,9 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-
+            e.printStackTrace();
         }
+
         InstanceUtil instanceUtil = InstanceUtil.getInstance();
         try {
             Response response = instanceUtil.getClient().newCall(searchRequest).execute();
@@ -78,6 +83,7 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
         }
 
         return  null;
+
     }
 
     public void loadNextPage() {
@@ -87,9 +93,21 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
     }
 
     @Override
-    public void deliverResult(List<MMovie> data) {
+    public void deliverResult(List<MMovie> movies) {
         mIsLoading = false;
-        super.deliverResult(data);
+        if (isReset()) {
+            // An async query came in while the loader is stopped
+            return;
+        }
+
+        if(mMovies == null) {
+            mMovies = new ArrayList<>(movies);
+        } else {
+            mMovies.addAll(movies);
+        }
+        if (isStarted()) {
+            super.deliverResult(new ArrayList<>(mMovies));
+        }
     }
 
     /**
