@@ -92,6 +92,10 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
         }
     }
 
+    public boolean doesHaveMorePages() {
+        return mTotalPages > mCurrentPage;
+    }
+
     @Override
     public void deliverResult(List<MMovie> movies) {
         mIsLoading = false;

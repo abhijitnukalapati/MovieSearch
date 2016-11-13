@@ -1,4 +1,4 @@
-package com.diaby.moviesearch.ui;
+package com.diaby.moviesearch.util;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -111,9 +111,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void updateData(@NonNull List<MMovie> moreMovies){
-        int addedCount = moreMovies.size() - movies.size();
-        movies.addAll(moreMovies.subList(movies.size(), moreMovies.size()));
-        notifyItemRangeInserted(getItemCount(), addedCount);
+        if(moreMovies.size() <= movies.size()) {
+            movies = new ArrayList<>(moreMovies);
+            notifyDataSetChanged();
+        } else {
+            int addedCount = moreMovies.size() - movies.size();
+            movies.addAll(moreMovies.subList(movies.size(), moreMovies.size()));
+            notifyItemRangeInserted(getItemCount(), addedCount);
+        }
     }
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {

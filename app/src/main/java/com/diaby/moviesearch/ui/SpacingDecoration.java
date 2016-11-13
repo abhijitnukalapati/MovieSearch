@@ -1,4 +1,4 @@
-package com.diaby.moviesearch.util;
+package com.diaby.moviesearch.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -10,7 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.diaby.moviesearch.R;
-import com.diaby.moviesearch.ui.MoviesAdapter;
+import com.diaby.moviesearch.util.MoviesAdapter;
 
 /**
  * Created by abhijitnukalapati on 11/8/16.
