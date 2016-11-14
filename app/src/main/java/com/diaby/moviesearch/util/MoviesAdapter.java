@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovie;
-import com.diaby.moviesearch.ui.MoviesFragment;
+import static com.diaby.moviesearch.ui.MoviesFragment.onMovieClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,8 @@ import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = MoviesAdapter.class.getSimpleName();
+
     public static final int ITEM_VIEW_TYPE_MOVIE = 321;
     public static final int ITEM_VIEW_TYPE_LOADER = 322;
 
@@ -34,13 +37,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private Drawable placeHolder;
     private int posterWidth;
     private int spanCount;
-    private int gridSpacing;
 
     public MoviesAdapter(Context context) {
-        spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
-        gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
-        posterWidth = context.getResources().getDisplayMetrics().widthPixels/spanCount - (gridSpacing * 2);
         placeHolder = ContextCompat.getDrawable(context, R.color.transparent);
+        spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
+
+        int gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
+        posterWidth = context.getResources().getDisplayMetrics().widthPixels/spanCount - (gridSpacing * 2);
     }
 
     @Override
@@ -75,14 +78,18 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         Glide.with(context)
                 .load("https://image.tmdb.org/t/p/w185" + movie.getPosterPath())
                 .placeholder(placeHolder)
+                .crossFade(context.getResources().getInteger(R.integer.image_animation_duration))
                 .fitCenter()
                 .into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // safe casting since we enforce that the activity implement the listener
-                ((MoviesFragment.onMovieClickListener) context).onMovieClicked(movie);
+                if(context instanceof onMovieClickListener) {
+                    ((onMovieClickListener) context).onMovieClicked(movie);
+                } else {
+                    Log.w(TAG, "Context is not an instance of onMovieClickListener, ignoring poster click");
+                }
             }
         });
     }

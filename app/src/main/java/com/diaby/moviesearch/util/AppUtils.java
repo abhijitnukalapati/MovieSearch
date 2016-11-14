@@ -2,9 +2,6 @@ package com.diaby.moviesearch.util;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 /**

@@ -42,6 +42,7 @@ public class MovieDetailFragment extends Fragment {
         MMovie movie = getArguments().getParcelable(MOVIE_DETAIL);
         Glide.with(this).load("https://image.tmdb.org/t/p/w780" + movie.getBackdropPath())
                 .fitCenter()
+                .crossFade(getResources().getInteger(R.integer.image_animation_duration))
                 .into(vBackdrop);
 
         vCollapsingToolbarLayout.setTitle(movie.getTitle());
