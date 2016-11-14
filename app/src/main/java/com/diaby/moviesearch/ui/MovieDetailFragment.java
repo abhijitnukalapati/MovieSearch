@@ -1,11 +1,16 @@
 package com.diaby.moviesearch.ui;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,10 +88,24 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
                 .into(vBackdrop);
 
         vCollapsingToolbarLayout.setTitle(movieDetail.getTitle());
+
         vOverview.setText(movieDetail.getOverview());
 
-        vReleaseDate.setText(getString(R.string.release_date, getFormattedDate(movieDetail.getReleaseDate())));
-        vRuntime.setText(getString(R.string.runtime, getFormattedTime(movieDetail.getRuntime())));
+        if(!TextUtils.isEmpty(movieDetail.getReleaseDate())) {
+            String releaseDate = getString(R.string.release_date, getFormattedDate(movieDetail.getReleaseDate()));
+            vReleaseDate.setText(formatLabel(releaseDate));
+            vReleaseDate.setVisibility(View.VISIBLE);
+        } else {
+            vReleaseDate.setVisibility(View.GONE);
+        }
+
+        if(movieDetail.getRuntime() > 0) {
+            String runTime = getString(R.string.runtime, getFormattedTime(movieDetail.getRuntime()));
+            vRuntime.setText(formatLabel(runTime));
+            vRuntime.setVisibility(View.VISIBLE);
+        } else {
+            vRuntime.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -109,5 +128,11 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     private String getFormattedTime(int runtime) {
         return String.format(Locale.getDefault(), "%1$dh %2$02dm", runtime/60, runtime % 60);
+    }
+
+    private SpannableString formatLabel(String text) {
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(new StyleSpan(Typeface.BOLD), 0, text.indexOf(':'), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return spannableString;
     }
 }

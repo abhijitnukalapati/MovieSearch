@@ -22,15 +22,14 @@ import okhttp3.Response;
 public class MovieDetailLoader extends AsyncTaskLoader<MMovieDetail> {
     private static final String TAG = MovieDetailLoader.class.getSimpleName();
 
-    private static final String MOVIE_DETAIL_URL = "https://api.themoviedb.org/3/movie/%1$d";
     private Uri.Builder mUri;
-
 
     public MovieDetailLoader(Context context, int movieId) {
         super(context);
 
         String apiKey = context.getResources().getString(R.string.api_key);
-        mUri = Uri.parse(String.format(Locale.getDefault(), MOVIE_DETAIL_URL, movieId))
+        String url = context.getResources().getString(R.string.movie_detail_url);
+        mUri = Uri.parse(String.format(Locale.getDefault(), url, movieId))
                 .buildUpon()
                 .appendQueryParameter("api_key", apiKey);
     }

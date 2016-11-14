@@ -53,17 +53,19 @@
                 android:text="@string/overview"/>
             <TextView
                 android:id="@+id/overview"
-                android:paddingTop="@dimen/space"
+                android:layout_marginTop="@dimen/space_micro"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/release_date"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:layout_marginTop="@dimen/space"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/runtime"
+                android:layout_marginTop="@dimen/space"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>

@@ -25,7 +25,6 @@ import okhttp3.Response;
 
 public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
     private static final String TAG = MoviesLoader.class.getSimpleName();
-    private static final String SEARCH_URL = "https://api.themoviedb.org/3/search/movie";
 
     private List<MMovie> mMovies;
     private Uri.Builder mUri;
@@ -37,9 +36,10 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
     public MoviesLoader(Context context, String query) {
         super(context);
         mQuery = query;
+        String url = context.getResources().getString(R.string.search_url);
 
         String apiKey = context.getResources().getString(R.string.api_key);
-        mUri = Uri.parse(SEARCH_URL)
+        mUri = Uri.parse(url)
                 .buildUpon()
                 .appendQueryParameter("api_key", apiKey)
                 .appendQueryParameter("query", query);
