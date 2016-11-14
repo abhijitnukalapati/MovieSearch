@@ -1,11 +1,16 @@
 package com.diaby.moviesearch.ui;
 
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,6 +52,12 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(SEARCH_QUERY, vSearchView.getText().toString().trim());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         getLoaderManager().initLoader(MOVIES_LOADER_ID, null, this);
         super.onActivityCreated(savedInstanceState);
@@ -55,10 +66,13 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_movie_list, container, false);
-
         vRecyclerView = (RecyclerView) root.findViewById(R.id.movies_recycler_view);
         vProgressBar = (ProgressBar) root.findViewById(R.id.movies_progress_bar);
         vSearchView = (AutoCompleteTextView) root.findViewById(R.id.movies_search_bar);
+
+        if(savedInstanceState != null && TextUtils.isEmpty(savedInstanceState.getString(SEARCH_QUERY))) {
+            vSearchView.setText(savedInstanceState.getString(SEARCH_QUERY));
+        }
 
         setupSearchView();
         setupRecyclerView();
@@ -95,17 +109,16 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 if(actionId == EditorInfo.IME_ACTION_SEARCH) {
                     consumed = true;
 
-                    // TODO: validate query
                     final String query = v.getText().toString().trim();
-                    AppUtils.hideSoftInput(getActivity());
+                    if(validateSearch(query)) {
+                        AppUtils.hideSoftInput(getActivity());
+                        Log.d(TAG, String.format("Searching for: \"%1$s\"", query));
 
-                    Log.d(TAG, String.format("Searching for: \"%1$s\"", query));
-
-                    Bundle bundle = new Bundle();
-                    bundle.putString(SEARCH_QUERY, query);
-
-                    vProgressBar.setVisibility(View.VISIBLE);
-                    getLoaderManager().restartLoader(MOVIES_LOADER_ID, bundle, MoviesFragment.this);
+                        Bundle bundle = new Bundle();
+                        bundle.putString(SEARCH_QUERY, query);
+                        vProgressBar.setVisibility(View.VISIBLE);
+                        getLoaderManager().restartLoader(MOVIES_LOADER_ID, bundle, MoviesFragment.this);
+                    }
                 }
 
                 return consumed;
@@ -152,5 +165,25 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                 return !moviesLoader.isLoading() && moviesLoader.doesHaveMorePages();
             }
         }));
+    }
+
+    private boolean validateSearch(String query){
+        boolean isValidTerm = true;
+
+        if(TextUtils.isEmpty(query)) {
+            isValidTerm = false;
+
+            float wiggleDistance = 10f;
+            float[] wiggleValues = new float[]{
+                    -wiggleDistance, wiggleDistance,
+                    -wiggleDistance, wiggleDistance,
+                    -wiggleDistance, wiggleDistance, 0
+            };
+
+            PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, wiggleValues);
+            ObjectAnimator.ofPropertyValuesHolder(vSearchView, pvhX).setDuration(400).start();
+        }
+
+        return isValidTerm;
     }
 }
