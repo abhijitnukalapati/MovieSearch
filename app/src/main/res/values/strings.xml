@@ -9,4 +9,7 @@
     <string name="release_date">Release Date: %1$s</string>
 
     <string name="movie_search">Movie \nSearch</string>
+
+    <string name="movies_list_empty_text">Your search results will appear here</string>
+    <string name="movies_list_empty_results">No search results found</string>
 </resources>

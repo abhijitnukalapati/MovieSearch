@@ -36,6 +36,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     private RecyclerView vRecyclerView;
     private ProgressBar vProgressBar;
     private AutoCompleteTextView vSearchView;
+    private TextView vEmptyView;
     private MoviesAdapter mMoviesAdapter;
     private String mSearchQuery;
 
@@ -68,6 +69,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         vRecyclerView = (RecyclerView) root.findViewById(R.id.movies_recycler_view);
         vProgressBar = (ProgressBar) root.findViewById(R.id.movies_progress_bar);
         vSearchView = (AutoCompleteTextView) root.findViewById(R.id.movies_search_bar);
+        vEmptyView = (TextView) root.findViewById(R.id.empty_view);
 
         if(savedInstanceState != null && TextUtils.isEmpty(savedInstanceState.getString(SEARCH_QUERY))) {
             vSearchView.setText(savedInstanceState.getString(SEARCH_QUERY));
@@ -89,6 +91,13 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoadFinished(Loader<List<MMovie>> loader, List<MMovie> movies) {
         if(vProgressBar.getVisibility() != View.GONE) {
             vProgressBar.setVisibility(View.GONE);
+        }
+
+        if(movies != null && movies.size() > 0) {
+            vEmptyView.setVisibility(View.GONE);
+        } else {
+            vEmptyView.setVisibility(View.VISIBLE);
+            vEmptyView.setText(getString(R.string.movies_list_empty_results));
         }
 
         mMoviesAdapter.setShowLoader(false);
@@ -113,6 +122,8 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
                         mSearchQuery = query;
                         AppUtils.hideSoftInput(getActivity());
                         Log.d(TAG, String.format("Searching for: \"%1$s\"", query));
+
+                        // TODO: save user's search queries
 
                         Bundle bundle = new Bundle();
                         bundle.putString(SEARCH_QUERY, query);
