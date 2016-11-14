@@ -119,11 +119,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * @param shouldShow a boolean
      */
     public void setShowLoader(boolean shouldShow) {
-        mShowLoader = shouldShow;
-        if(mShowLoader) {
-            notifyItemInserted(getItemCount());
-        } else {
-            notifyItemRemoved(getItemCount());
+        if(mShowLoader != shouldShow) {
+            mShowLoader = shouldShow;
+            if (mShowLoader) {
+                notifyItemInserted(getItemCount());
+            } else {
+                notifyItemRemoved(getItemCount());
+            }
         }
     }
 

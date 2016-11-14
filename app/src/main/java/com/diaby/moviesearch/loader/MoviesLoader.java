@@ -25,6 +25,7 @@ import okhttp3.Response;
 
 public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
     private static final String TAG = MoviesLoader.class.getSimpleName();
+    public static final int MOVIES_LOADER_ID = 30;
 
     private List<MMovie> mMovies;
     private Uri.Builder mUri;

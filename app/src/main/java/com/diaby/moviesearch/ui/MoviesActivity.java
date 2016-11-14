@@ -26,7 +26,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesFragment.
     public void onMovieClicked(MMovie movie) {
         MovieDetailFragment movieDetailFragment = MovieDetailFragment.newInstance(movie.getId());
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, movieDetailFragment)
+                .add(R.id.fragment_container, movieDetailFragment)
                 .addToBackStack(null)
                 .commit();
     }

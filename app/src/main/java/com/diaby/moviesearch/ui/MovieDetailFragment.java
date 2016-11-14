@@ -21,14 +21,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.loader.MovieDetailLoader;
-import com.diaby.moviesearch.model.MMovie;
 import com.diaby.moviesearch.model.MMovieDetail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+
+import static com.diaby.moviesearch.loader.MovieDetailLoader.MOVIES_DETAIL_LOADER_ID;
 
 /**
  * Created by abhijitnukalapati on 11/13/16.
@@ -44,7 +44,6 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     private TextView vRuntime;
     private TextView vReleaseDate;
 
-    private static final int MOVIES_DETAIL_LOADER_ID = 90;
     public static final String MOVIE_ID = "movie_id";
 
     public static MovieDetailFragment newInstance(int id) {

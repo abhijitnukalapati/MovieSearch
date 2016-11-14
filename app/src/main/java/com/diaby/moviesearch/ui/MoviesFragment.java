@@ -26,6 +26,8 @@ import com.diaby.moviesearch.loader.MoviesLoader;
 
 import java.util.List;
 
+import static com.diaby.moviesearch.loader.MoviesLoader.MOVIES_LOADER_ID;
+
 /**
  * Created by abhijitnukalapati on 11/13/16.
  */
@@ -37,7 +39,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     private MoviesAdapter mMoviesAdapter;
     private String mSearchQuery;
 
-    private static final int MOVIES_LOADER_ID = 30;
     private static final String SEARCH_QUERY = "search_query";
     private static final String TAG = MoviesFragment.class.getSimpleName();
 
