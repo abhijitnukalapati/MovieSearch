@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.loader.MovieDetailLoader;
 import com.diaby.moviesearch.model.MMovieDetail;
+import com.diaby.moviesearch.util.FlexibleImageLoader;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,6 +30,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.diaby.moviesearch.loader.MovieDetailLoader.MOVIES_DETAIL_LOADER_ID;
+import static com.diaby.moviesearch.util.FlexibleImageLoader.IMAGE_TYPE.BACKDROP;
 
 /**
  * Created by abhijitnukalapati on 11/13/16.
@@ -81,7 +83,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<MMovieDetail> loader, MMovieDetail movieDetail) {
-        Glide.with(this).load("https://image.tmdb.org/t/p/w780" + movieDetail.getBackdropPath())
+        Glide.with(this)
+                .using(new FlexibleImageLoader(getActivity(), BACKDROP))
+                .load(movieDetail.getBackdropPath())
                 .fitCenter()
                 .crossFade(getResources().getInteger(R.integer.image_animation_duration))
                 .into(vBackdrop);

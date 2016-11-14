@@ -15,7 +15,10 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovie;
+import com.diaby.moviesearch.util.FlexibleImageLoader;
+
 import static com.diaby.moviesearch.ui.MoviesFragment.onMovieClickListener;
+import static com.diaby.moviesearch.util.FlexibleImageLoader.IMAGE_TYPE.POSTER;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +42,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int spanCount;
 
     public MoviesAdapter(Context context) {
-        placeHolder = ContextCompat.getDrawable(context, R.color.transparent);
+        placeHolder = ContextCompat.getDrawable(context, R.color.placeholder);
         spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
 
         int gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
@@ -75,8 +78,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final Context context = holder.imageView.getContext();
         final MMovie movie = movies.get(position);
 
+        // TODO: fix abrupt image resizing
         Glide.with(context)
-                .load("https://image.tmdb.org/t/p/w185" + movie.getPosterPath())
+                .using(new FlexibleImageLoader(context, POSTER))
+                .load(movie.getPosterPath())
                 .placeholder(placeHolder)
                 .crossFade(context.getResources().getInteger(R.integer.image_animation_duration))
                 .fitCenter()

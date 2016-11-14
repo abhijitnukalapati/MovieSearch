@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00796B</color>
     <color name="colorAccent">#CDDC39</color>
 
-    <color name="movies_list_background">#ff292929</color>
+    <color name="movies_list_background">@android:color/white</color>
     <color name="transparent">#00000000</color>
+    <color name="placeholder">#ff292929</color>
 </resources>
