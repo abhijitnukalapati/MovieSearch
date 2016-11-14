@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.diaby.moviesearch.R;
+import com.diaby.moviesearch.model.MMovie;
 
-public class MoviesActivity extends AppCompatActivity {
+public class MoviesActivity extends AppCompatActivity implements MoviesFragment.onMovieClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,4 +22,12 @@ public class MoviesActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onMovieClicked(MMovie movie) {
+        MovieDetailFragment movieDetailFragment = MovieDetailFragment.newInstance(movie);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, movieDetailFragment)
+                .addToBackStack(null)
+                .commit();
+    }
 }

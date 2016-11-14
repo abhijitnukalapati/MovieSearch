@@ -1,3 +1,8 @@
 <resources>
-    <dimen name="grid_divider">2dp</dimen>
+    <dimen name="grid_divider_space">2dp</dimen>
+    <dimen name="space_micro">5dp</dimen>
+    <dimen name="space">10dp</dimen>
+    <dimen name="space_medium">15dp</dimen>
+    <dimen name="space_large">20dp</dimen>
+    <dimen name="space_huge">25dp</dimen>
 </resources>

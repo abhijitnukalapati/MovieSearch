@@ -1,7 +1,6 @@
 package com.diaby.moviesearch.util;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -15,7 +14,7 @@ import android.widget.ProgressBar;
 import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovie;
-import com.diaby.moviesearch.util.AppUtils;
+import com.diaby.moviesearch.ui.MoviesFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +33,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Drawable placeHolder;
     private int posterWidth;
+    private int spanCount;
+    private int gridSpacing;
 
     public MoviesAdapter(Context context) {
-        Point point = AppUtils.getScreenSize(context);
-        posterWidth = point.x/context.getResources().getInteger(R.integer.movies_grid_span_count);
+        spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
+        gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
+        posterWidth = context.getResources().getDisplayMetrics().widthPixels/spanCount - (gridSpacing * 2);
         placeHolder = ContextCompat.getDrawable(context, R.color.transparent);
     }
 
@@ -66,19 +68,41 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public void bindMovieViewHolder(MovieViewHolder holder, int position) {
-        Glide.with(holder.imageView.getContext())
-                .load("https://image.tmdb.org/t/p/w185" + movies.get(position).getPosterPath())
+    public void bindMovieViewHolder(final MovieViewHolder holder, final int position) {
+        final Context context = holder.imageView.getContext();
+        final MMovie movie = movies.get(position);
+
+        Glide.with(context)
+                .load("https://image.tmdb.org/t/p/w185" + movie.getPosterPath())
                 .placeholder(placeHolder)
                 .fitCenter()
-                .crossFade(600)
                 .into(holder.imageView);
+
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // safe casting since we enforce that the activity implement the listener
+                ((MoviesFragment.onMovieClickListener) context).onMovieClicked(movie);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         int pad = mShowLoader ? 1 : 0;
         return movies != null ? movies.size() + pad : 0;
+    }
+
+    public int getSpanCount(int position) {
+        final int itemViewType = getItemViewType(position);
+
+        if(itemViewType == ITEM_VIEW_TYPE_LOADER) {
+            return spanCount;
+        } else if (itemViewType == ITEM_VIEW_TYPE_MOVIE){
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     /**

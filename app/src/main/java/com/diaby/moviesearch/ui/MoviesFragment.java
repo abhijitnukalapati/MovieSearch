@@ -38,6 +38,10 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     private static final String SEARCH_QUERY = "search_query";
     private static final String TAG = MoviesFragment.class.getSimpleName();
 
+    public interface onMovieClickListener {
+        void onMovieClicked(MMovie movie);
+    }
+
     public static MoviesFragment newInstance() {
         return new MoviesFragment();
     }
@@ -50,14 +54,13 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_movies, container, false);
+        View root = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
         vRecyclerView = (RecyclerView) root.findViewById(R.id.movies_recycler_view);
         vProgressBar = (ProgressBar) root.findViewById(R.id.movies_progress_bar);
         vSearchView = (AutoCompleteTextView) root.findViewById(R.id.movies_search_bar);
 
         setupSearchView();
-
         setupRecyclerView();
 
         return root;
@@ -116,17 +119,17 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
         gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                if (mMoviesAdapter.getItemViewType(position) == MoviesAdapter.ITEM_VIEW_TYPE_LOADER) {
-                    return spanCount;
+                if(mMoviesAdapter == null) {
+                    return 0;
                 } else {
-                    return 1;
+                    return mMoviesAdapter.getSpanCount(position);
                 }
             }
         });
 
         vRecyclerView.setLayoutManager(gridLayoutManager);
         vRecyclerView.setAdapter(mMoviesAdapter = new MoviesAdapter(getActivity()));
-        vRecyclerView.addItemDecoration(new SpacingDecoration(R.dimen.grid_divider, getActivity()));
+        vRecyclerView.addItemDecoration(new SpacingDecoration(R.dimen.grid_divider_space, getActivity()));
         vRecyclerView.addOnScrollListener(new PaginationHelper(new PaginationHelper.PaginationCallback() {
             @Override
             public void onLoadMore(RecyclerView recyclerView) {

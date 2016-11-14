@@ -13,14 +13,6 @@ import android.view.inputmethod.InputMethodManager;
 
 public class AppUtils {
 
-    public static Point getScreenSize(Context context){
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        return size;
-    }
-
     /**
      * Hides the software input method if visible (most commonly the keyboard).
      * @param activity the current top-level activity
