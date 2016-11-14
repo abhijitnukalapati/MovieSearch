@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer name="movies_grid_span_count">2</integer>
-    <integer name="image_animation_duration">500</integer>
-    <integer name="width_factor">1</integer>
+    <integer name="width_factor">2</integer>
 </resources>

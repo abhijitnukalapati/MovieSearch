@@ -46,7 +46,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
 
         int gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
-        posterWidth = context.getResources().getDisplayMetrics().widthPixels/spanCount - (gridSpacing * 2);
+        int widthFactor = context.getResources().getInteger(R.integer.width_factor);
+        posterWidth = (context.getResources().getDisplayMetrics().widthPixels/(widthFactor * spanCount)) - (gridSpacing * 2);
     }
 
     @Override

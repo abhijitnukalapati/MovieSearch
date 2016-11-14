@@ -60,7 +60,9 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        getLoaderManager().initLoader(MOVIES_DETAIL_LOADER_ID, getArguments(),this);
+        if(getArguments() != null) {
+            getLoaderManager().initLoader(MOVIES_DETAIL_LOADER_ID, getArguments(), this);
+        }
     }
 
     @Override
@@ -80,6 +82,15 @@ public class MovieDetailFragment extends Fragment implements LoaderManager.Loade
     public Loader<MMovieDetail> onCreateLoader(int id, Bundle args) {
         return new MovieDetailLoader(getActivity(), args.getInt(MOVIE_ID));
     }
+
+    public void updateData(int movieId) {
+        if(isAdded()) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(MOVIE_ID, movieId);
+            getLoaderManager().restartLoader(MOVIES_DETAIL_LOADER_ID, bundle, this);
+        }
+    }
+
 
     @Override
     public void onLoadFinished(Loader<MMovieDetail> loader, MMovieDetail movieDetail) {

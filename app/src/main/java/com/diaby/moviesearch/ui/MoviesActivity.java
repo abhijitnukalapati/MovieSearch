@@ -13,7 +13,7 @@ public class MoviesActivity extends AppCompatActivity implements MoviesFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies);
 
-        if(savedInstanceState == null) {
+        if(savedInstanceState == null && findViewById(R.id.fragment_container) != null) {
             MoviesFragment fragment = MoviesFragment.newInstance();
 
             getSupportFragmentManager().beginTransaction()
@@ -24,10 +24,17 @@ public class MoviesActivity extends AppCompatActivity implements MoviesFragment.
 
     @Override
     public void onMovieClicked(MMovie movie) {
-        MovieDetailFragment movieDetailFragment = MovieDetailFragment.newInstance(movie.getId());
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, movieDetailFragment)
-                .addToBackStack(null)
-                .commit();
+        MovieDetailFragment movieDetailFragment = (MovieDetailFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.movie_detail_fragment);
+
+        if(movieDetailFragment == null) {
+            movieDetailFragment = MovieDetailFragment.newInstance(movie.getId());
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, movieDetailFragment)
+                    .addToBackStack(null)
+                    .commit();
+        } else {
+            movieDetailFragment.updateData(movie.getId());
+        }
     }
 }
