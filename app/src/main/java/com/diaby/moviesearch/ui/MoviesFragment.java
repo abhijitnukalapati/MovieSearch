@@ -2,9 +2,7 @@ package com.diaby.moviesearch.ui;
 
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -24,8 +22,7 @@ import android.widget.TextView;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovie;
 import com.diaby.moviesearch.util.AppUtils;
-import com.diaby.moviesearch.util.MoviesAdapter;
-import com.diaby.moviesearch.util.MoviesLoader;
+import com.diaby.moviesearch.loader.MoviesLoader;
 
 import java.util.List;
 
@@ -38,6 +35,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
     private ProgressBar vProgressBar;
     private AutoCompleteTextView vSearchView;
     private MoviesAdapter mMoviesAdapter;
+    private String mSearchQuery;
 
     private static final int MOVIES_LOADER_ID = 30;
     private static final String SEARCH_QUERY = "search_query";
@@ -53,7 +51,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(SEARCH_QUERY, vSearchView.getText().toString().trim());
+        outState.putString(SEARCH_QUERY, mSearchQuery);
         super.onSaveInstanceState(outState);
     }
 
@@ -111,6 +109,7 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
                     final String query = v.getText().toString().trim();
                     if(validateSearch(query)) {
+                        mSearchQuery = query;
                         AppUtils.hideSoftInput(getActivity());
                         Log.d(TAG, String.format("Searching for: \"%1$s\"", query));
 
@@ -181,7 +180,9 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
             };
 
             PropertyValuesHolder pvhX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, wiggleValues);
-            ObjectAnimator.ofPropertyValuesHolder(vSearchView, pvhX).setDuration(400).start();
+            ObjectAnimator.ofPropertyValuesHolder(vSearchView, pvhX)
+                    .setDuration(400)
+                    .start();
         }
 
         return isValidTerm;

@@ -1,4 +1,4 @@
-package com.diaby.moviesearch.util;
+package com.diaby.moviesearch.loader;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,6 +9,7 @@ import android.util.Log;
 import com.diaby.moviesearch.R;
 import com.diaby.moviesearch.model.MMovie;
 import com.diaby.moviesearch.model.MMovieSearch;
+import com.diaby.moviesearch.util.InstanceUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,8 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
         mQuery = query;
 
         String apiKey = context.getResources().getString(R.string.api_key);
-        mUri = Uri.parse(SEARCH_URL).buildUpon()
+        mUri = Uri.parse(SEARCH_URL)
+                .buildUpon()
                 .appendQueryParameter("api_key", apiKey)
                 .appendQueryParameter("query", query);
     }
@@ -62,12 +64,6 @@ public class MoviesLoader extends AsyncTaskLoader<List<MMovie>> {
         Request searchRequest = new Request.Builder()
                 .url(url)
                 .build();
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         InstanceUtil instanceUtil = InstanceUtil.getInstance();
         try {

@@ -1,4 +1,4 @@
-package com.diaby.moviesearch.util;
+package com.diaby.moviesearch.ui;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
