@@ -61,6 +61,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_cell, parent, false);
             ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
             layoutParams.width = posterWidth;
+            layoutParams.height = (int) (posterWidth * 1.45f);
             v.setLayoutParams(layoutParams);
             return new MovieViewHolder(v);
         }
@@ -79,7 +80,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         final Context context = holder.imageView.getContext();
         final MMovie movie = movies.get(position);
 
-        // TODO: fix abrupt image resizing
         Glide.with(context)
                 .using(new FlexibleImageLoader(context, POSTER))
                 .load(movie.getPosterPath())
