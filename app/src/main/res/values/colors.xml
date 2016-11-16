@@ -6,5 +6,5 @@
 
     <color name="movies_list_background">@android:color/white</color>
     <color name="transparent">#00000000</color>
-    <color name="placeholder">#ff292929</color>
+    <color name="dark_black">#ff292929</color>
 </resources>

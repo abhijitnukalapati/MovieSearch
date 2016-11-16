@@ -153,7 +153,6 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
 
         vRecyclerView.setLayoutManager(gridLayoutManager);
         vRecyclerView.setAdapter(mMoviesAdapter = new MoviesAdapter(getActivity()));
-        vRecyclerView.addItemDecoration(new SpacingDecoration(R.dimen.grid_divider_space, getActivity()));
         vRecyclerView.addOnScrollListener(new PaginationHelper(new PaginationHelper.PaginationCallback() {
             @Override
             public void onLoadMore(RecyclerView recyclerView) {

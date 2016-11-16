@@ -1,5 +1,5 @@
 <resources>
-    <dimen name="grid_divider_space">2dp</dimen>
+    <dimen name="grid_divider_space">10dp</dimen>
     <dimen name="space_micro">5dp</dimen>
     <dimen name="space">10dp</dimen>
     <dimen name="space_medium">15dp</dimen>

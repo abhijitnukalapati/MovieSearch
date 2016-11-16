@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.diaby.moviesearch.R;
@@ -39,15 +40,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Drawable placeHolder;
     private int posterWidth;
+    private int posterHeight;
     private int spanCount;
 
     public MoviesAdapter(Context context) {
-        placeHolder = ContextCompat.getDrawable(context, R.color.placeholder);
+        placeHolder = ContextCompat.getDrawable(context, android.R.color.darker_gray);
         spanCount = context.getResources().getInteger(R.integer.movies_grid_span_count);
 
         int gridSpacing = context.getResources().getDimensionPixelOffset(R.dimen.grid_divider_space);
         int widthFactor = context.getResources().getInteger(R.integer.width_factor);
         posterWidth = (context.getResources().getDisplayMetrics().widthPixels/(widthFactor * spanCount)) - (gridSpacing * 2);
+        posterHeight = (int) (posterWidth * 1.45f);
     }
 
     @Override
@@ -59,10 +62,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return new LoaderViewHolder(v);
         } else if(viewType == ITEM_VIEW_TYPE_MOVIE){
             v = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_cell, parent, false);
-            ViewGroup.LayoutParams layoutParams = v.getLayoutParams();
-            layoutParams.width = posterWidth;
-            layoutParams.height = (int) (posterWidth * 1.45f);
-            v.setLayoutParams(layoutParams);
+            ImageView imageView = (ImageView) v.findViewById(R.id.movie_poster);
+            ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            params.height = posterHeight;
+            params.width = posterWidth;
             return new MovieViewHolder(v);
         }
 
@@ -76,19 +79,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    public void bindMovieViewHolder(final MovieViewHolder holder, final int position) {
-        final Context context = holder.imageView.getContext();
+    private void bindMovieViewHolder(final MovieViewHolder holder, final int position) {
+        final Context context = holder.moviePoster.getContext();
         final MMovie movie = movies.get(position);
 
         Glide.with(context)
                 .using(new FlexibleImageLoader(context, POSTER))
                 .load(movie.getPosterPath())
                 .placeholder(placeHolder)
-                .crossFade(context.getResources().getInteger(R.integer.image_animation_duration))
+                .dontAnimate() // TODO: investigate flicker when animation is turned on
                 .fitCenter()
-                .into(holder.imageView);
+                .into(holder.moviePoster);
 
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(context instanceof onMovieClickListener) {
@@ -98,6 +101,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 }
             }
         });
+
+        holder.movieTitle.setText(movie.getTitle());
     }
 
     @Override
@@ -161,11 +166,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class MovieViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
+        private ImageView moviePoster;
+        private TextView movieTitle;
 
         public MovieViewHolder(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView;
+            moviePoster = (ImageView) itemView.findViewById(R.id.movie_poster);
+            movieTitle = (TextView) itemView.findViewById(R.id.movie_title);
         }
     }
 
