@@ -93,16 +93,15 @@ public class MoviesFragment extends Fragment implements LoaderManager.LoaderCall
             vProgressBar.setVisibility(View.GONE);
         }
 
+        mMoviesAdapter.setShowLoader(false);
         if(movies != null && movies.size() > 0) {
             vEmptyView.setVisibility(View.GONE);
-            mMoviesAdapter.setShowLoader(false);
             mMoviesAdapter.updateData(movies);
         } else {
             vEmptyView.setVisibility(View.VISIBLE);
             vEmptyView.setText(getString(R.string.movies_list_empty_results));
         }
 
-      
     }
 
     @Override

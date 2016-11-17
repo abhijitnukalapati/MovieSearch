@@ -88,7 +88,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 .load(movie.getPosterPath())
                 .placeholder(placeHolder)
                 .dontAnimate() // TODO: investigate flicker when animation is turned on
-                .fitCenter()
                 .into(holder.moviePoster);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
