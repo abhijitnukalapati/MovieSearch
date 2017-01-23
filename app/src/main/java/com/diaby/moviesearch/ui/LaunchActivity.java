@@ -43,7 +43,7 @@ public class LaunchActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoaderReset(Loader<MConfiguration> loader) {
-
+        // do nothing
     }
 
     private void startMoviesActivity() {
